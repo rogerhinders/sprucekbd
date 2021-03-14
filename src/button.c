@@ -11,6 +11,67 @@ static void *reset_button(void *arg) {
 	return NULL;
 }
 
+static void send_fake_keysym(xcb_keysym_t keysym) {
+	xcb_test_fake_input(
+			xserver_get_conn(),
+			XCB_KEY_PRESS,
+			*xcb_key_symbols_get_keycode(
+				xserver_get_key_symbols(), keysym), 
+			XCB_CURRENT_TIME,
+			xserver_get_root_wnd()->handle,
+			0,0,0);
+
+	xcb_test_fake_input(
+			xserver_get_conn(),
+			XCB_KEY_RELEASE,
+			*xcb_key_symbols_get_keycode(
+				xserver_get_key_symbols(), keysym), 
+			XCB_CURRENT_TIME,
+			xserver_get_root_wnd()->handle,
+			0,0,0);
+}
+
+static void send_fake_key_event(struct button *btn) {
+	xcb_keysym_t key = XK_VoidSymbol;
+
+	switch(btn->key->type) {
+	case LAYOUT_KEY_TYPE_NULL:
+		return;
+	case LAYOUT_KEY_TYPE_SYM:
+		key = btn->key->label[0];
+		break;
+	case LAYOUT_KEY_TYPE_ESC:
+		key = XK_Escape;
+		break;
+	case LAYOUT_KEY_TYPE_CTRL:
+		key = XK_Control_L;
+		break;
+	case LAYOUT_KEY_TYPE_ALT:
+		key = XK_Alt_L;
+		break;
+	case LAYOUT_KEY_TYPE_DELETE:
+		key = XK_Delete;
+		break;
+	case LAYOUT_KEY_TYPE_BKSPACE:
+		key = XK_BackSpace;
+		break;
+	case LAYOUT_KEY_TYPE_MOD:
+		key = XK_Super_L;
+		break;
+	case LAYOUT_KEY_TYPE_TAB:
+		key = XK_Tab;
+		break;
+	case LAYOUT_KEY_TYPE_ENTER:
+		key = XK_Return;
+		break;
+	case LAYOUT_KEY_TYPE_SHIFT:
+		key = XK_Shift_L;
+		break;
+	}
+
+	send_fake_keysym(key);
+}
+
 struct button *button_create(
 		struct window *parent, struct layout_key *key, void (*click_handler)(),
 		uint32_t x, uint32_t y){
@@ -104,8 +165,10 @@ void button_draw(struct button *btn) {
 void button_onclick(struct button *btn) {
 	pthread_t t_reset;
 
-	printf("%s\n", btn->key->label);
+	printf("PRESS %s\n", btn->key->label);
 	btn->pressed = true;
+
+	send_fake_key_event(btn);
 	button_draw(btn);
 
 	pthread_create(&t_reset, NULL, reset_button, btn);

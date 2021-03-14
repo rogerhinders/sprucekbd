@@ -6,6 +6,7 @@ static uint32_t screen_col_white;
 static uint32_t screen_col_black;
 static uint8_t screen_color_depth;
 static xcb_visualid_t screen_visual;
+static xcb_key_symbols_t *key_syms = NULL;
 
 bool xserver_connect() {
 	int err;
@@ -29,6 +30,8 @@ bool xserver_init() {
 		printf("init err: unable to connect to xserver!\n");
 		return false;
 	}
+
+	key_syms = xcb_key_symbols_alloc(xserver_get_conn());
 
 	xcb_screen_t *screen = xcb_setup_roots_iterator(
 			xcb_get_setup(x_conn)).data;
@@ -161,4 +164,8 @@ xcb_gcontext_t xserver_create_drawable_gc(
 	xcb_create_gc(xserver_get_conn(), gc, wnd->handle, mask, vlist);
 
 	return gc;
+}
+
+xcb_key_symbols_t *xserver_get_key_symbols() {
+	return key_syms;
 }

@@ -1,9 +1,11 @@
 #include <xcb/xcb.h>
+#include <xcb/xcb_icccm.h>
 #include <xcb/xcb_keysyms.h>
 #include "general.h"
 #include "xserver.h"
 #include "layout.h"
 #include "keyboard.h"
+
 
 int main() {
 	int32_t ret = EXIT_SUCCESS;
@@ -51,6 +53,14 @@ int main() {
 			v_list);
 
 	xserver_map_window(k_wnd);
+
+	xcb_icccm_wm_hints_t wm_hints;
+	xcb_icccm_wm_hints_set_none(&wm_hints);
+	xcb_icccm_wm_hints_set_input(&wm_hints, 0);
+	xcb_icccm_set_wm_hints(
+			xserver_get_conn(),
+			k_wnd->handle,
+			&wm_hints);
 	xserver_flush_conn();
 
 
@@ -65,6 +75,7 @@ int main() {
 			break;
 		case XCB_BUTTON_PRESS:
 			bev = (xcb_button_press_event_t *)ev;
+			printf("presss\n");
 
 			if(k_wnd != NULL && bev->event == k_wnd->handle)
 				keyboard_onclick(bev->event_x, bev->event_y);

@@ -1,10 +1,16 @@
 #ifndef _BUTTON_H
 #define _BUTTON_H
 
+/* define to enable x11 keycodes from ksymdef */
+#define XK_MISCELLANY
+
 #include <pthread.h>
 #include <unistd.h>
 #include <xcb/xcb.h>
 #include <xcb/xproto.h>
+#include <xcb/xtest.h>
+#include <xcb/xcb_keysyms.h>
+#include <X11/keysymdef.h>
 #include "general.h"
 #include "xserver.h"
 #include "layout.h"

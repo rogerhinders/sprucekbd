@@ -23,5 +23,5 @@ xcb_gcontext_t xserver_create_font_gc(
 		uint32_t bg, uint32_t fg, char *font, struct window *wnd);
 xcb_gcontext_t xserver_create_drawable_gc(
 		uint32_t bg, uint32_t fg, struct window *wnd);
-
+xcb_key_symbols_t *xserver_get_key_symbols();
 #endif /* _XSERVER_H */
