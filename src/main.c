@@ -31,7 +31,9 @@ int main() {
 		goto _main_cleanup;
 	}
 
-	window_setsize(k_wnd, xserver_get_root_wnd()->w/2, 800);
+
+	window_setsize(
+			k_wnd, xserver_get_root_wnd()->w/W_DIV, keyboard_get_height());
 
 	v_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
 	v_list[0] = xserver_screen_get_white();
@@ -61,8 +63,10 @@ int main() {
 			xserver_get_conn(),
 			k_wnd->handle,
 			&wm_hints);
+
 	xserver_flush_conn();
 
+	keyboard_enable_dock_mode();
 
 	xcb_generic_event_t *ev;
 	xcb_button_press_event_t *bev;
@@ -70,18 +74,17 @@ int main() {
 	while((ev = xcb_wait_for_event(xserver_get_conn()))) {
 		switch(ev->response_type) {
 		case XCB_EXPOSE:
-			printf("expose!\n");
 			keyboard_draw();
 			break;
 		case XCB_BUTTON_PRESS:
 			bev = (xcb_button_press_event_t *)ev;
-			printf("presss\n");
 
 			if(k_wnd != NULL && bev->event == k_wnd->handle)
 				keyboard_onclick(bev->event_x, bev->event_y);
 
 			break;
 		default:
+			printf("missed event: %x\n", ev->response_type);
 			break;
 		}
 	}

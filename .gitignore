@@ -1,0 +1,3 @@
+*.o
+sprucekbd
+compile_commands.json

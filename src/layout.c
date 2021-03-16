@@ -90,9 +90,9 @@ static bool load_layout_default() {
 	*key++ = create_sym_key_1u("B");
 	*key++ = create_sym_key_1u("N");
 	*key++ = create_sym_key_1u("M");
-	*key++ = create_sym_key_1u(".");
-	*key++ = create_sym_key_1u(",");
 	*key++ = create_sym_key_1u("/");
+	*key++ = create_key("Enter", LAYOUT_KEY_TYPE_ENTER, 2.0f);
+	*key++ = create_key("", LAYOUT_KEY_TYPE_NULL, 1.0f);
 	*key++ = create_key("", LAYOUT_KEY_TYPE_NULL, 1.0f);
 
 	key = get_row(4);
@@ -101,8 +101,8 @@ static bool load_layout_default() {
 	*key++ = create_key("Alt", LAYOUT_KEY_TYPE_ALT, 1.0f);
 	*key++ = create_key("Mod", LAYOUT_KEY_TYPE_MOD, 1.0f);
 	*key++ = create_sym_key_1u("@");
-	*key++ = create_key("", LAYOUT_KEY_TYPE_BKSPACE, 5.0f);
-	*key++ = create_sym_key_1u(":");
+	*key++ = create_key(" ", LAYOUT_KEY_TYPE_SYM, 5.0f);
+	*key++ = create_sym_key_1u(".");
 	*key++ = create_sym_key_1u(";");
 	*key++ = create_sym_key_1u("SW");
 	*key++ = create_key("", LAYOUT_KEY_TYPE_NULL, 0.5f);

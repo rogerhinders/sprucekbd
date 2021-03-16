@@ -165,7 +165,6 @@ void button_draw(struct button *btn) {
 void button_onclick(struct button *btn) {
 	pthread_t t_reset;
 
-	printf("PRESS %s\n", btn->key->label);
 	btn->pressed = true;
 
 	send_fake_key_event(btn);

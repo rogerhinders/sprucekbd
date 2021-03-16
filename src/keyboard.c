@@ -55,7 +55,7 @@ void keyboard_cleanup() {
 }
 
 uint32_t keyboard_unit_to_px(float unit) {
-	uint32_t u1 = (xserver_get_root_wnd()->w / 2) / layout_get_keys()->cols;
+	uint32_t u1 = (xserver_get_root_wnd()->w / W_DIV) / layout_get_keys()->cols;
 	return u1 * unit;
 }
 
@@ -72,4 +72,43 @@ void keyboard_onclick(uint32_t x, uint32_t y) {
 				y > btn->y && y < btn->y + btn->h)
 			button_onclick(btn);
 	}
+}
+
+void keyboard_enable_dock_mode() {
+	char *s_type = "_NET_WM_WINDOW_TYPE";
+	char *s_type_dock = "_NET_WM_WINDOW_TYPE_DOCK";
+
+	xcb_intern_atom_reply_t *r_type, *r_dock;
+
+	if(!(r_type = xcb_intern_atom_reply(
+			xserver_get_conn(),
+			xcb_intern_atom(
+				xserver_get_conn(), 0, strlen(s_type), s_type),
+			NULL)))
+		return;
+
+	if(!(r_dock = xcb_intern_atom_reply(
+			xserver_get_conn(),
+			xcb_intern_atom(
+				xserver_get_conn(), 0, strlen(s_type_dock), s_type_dock),
+			NULL)))
+		return;
+	
+
+	xcb_change_property(
+			xserver_get_conn(),
+			XCB_PROP_MODE_REPLACE,
+			p_wnd->handle,
+			r_type->atom,
+			XCB_ATOM_ATOM,
+			32,
+			1,
+			&r_dock->atom);
+
+	xserver_flush_conn();
+	printf("set type: dock\n");
+}
+
+uint32_t keyboard_get_height() {
+	return layout_get_keys()->rows * keyboard_get_key_height();
 }
